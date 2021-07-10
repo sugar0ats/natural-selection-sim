@@ -5,6 +5,9 @@ class Individual {
     this.genes = this.createGenes();
     this.radius = 10;
 
+    this.fitness;
+    this.distance;
+
   }
 
   createGenes() {
@@ -22,6 +25,47 @@ class Individual {
     ellipse(this.x, this.y, this.radius);
   }
 
+  calculateFitness() {
+    this.distance = dist(this.x, this.y, GOAL_X, GOAL_Y);
+    let normalized = this.distance / CANVAS_HEIGHT;
+    this.fitness = 1 - normalized;
+  }
+
+  calculateDistance() {
+    this.distance = dist(this.x, this.y, GOAL_X, GOAL_Y);
+    return this.distance;
+  }
+
+  crossover(partner) { // pass in the partner
+    let new_genes = []; // create a new array for the new genes
+    for (let i = 0; i<GENE_LENGTH; i++) { // loop through the individual's genes
+      if (i % 2 == 0) { // alternate between the mom and dad's genes when performing the crossover 
+        new_genes.push(this.genes[i]);
+      } else {
+        new_genes.push(partner.getGenes()[i]);
+      }
+    }
+
+    return new_genes;
+  }
+
+  mutate(mutationRate) {
+    for (let i = 0; i<GENE_LENGTH; i++) {
+      if (random(1) < mutationRate) { // randomly generate a number between 0-1 and see if its less than the mutation rate
+        this.genes[i] = p5.Vector.random2D(); // if there is a mutation occurring there, generate a completely new Vector there
+      }
+    }
+
+  }
+
+  getFitness() {
+    return this.fitness;
+  }
+
+  // getDistance() {
+  //   return this.distance;
+  // }
+
   setX(change) {
     this.x = this.x + change;
   }
@@ -32,6 +76,10 @@ class Individual {
 
   getGenes() {
     return this.genes;
+  }
+
+  setGenes(genes) {
+    this.genes = genes;
   }
 
 
